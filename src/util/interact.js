@@ -3,7 +3,8 @@ import {pinJSONToIPFS,pinFileToIPFS} from "./pinata.js";
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const contractABI = require("../contract-abi.json");
-const contractAddress = "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE";
+//const contractAddress = "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE";
+const contractAddress = "0x88a9780Fb8077c40CF02402a8eea829abE63F286";
 const {createAlchemyWeb3} = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 //const fs = require('fs');
@@ -111,6 +112,7 @@ export const mintNFT = async (url, name, description) => {
             status: "😢 Something went wrong while uploading your tokenURI.",
         };
     }
+    console.log(pinataResponse);
     const tokenURI = pinataResponse.pinataUrl;
     //console.log(tokenURI);
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);
@@ -150,22 +152,32 @@ export const mintNFTFromSelectedFile = async (file, name, description) => {
             status: "❗Please make sure all fields are completed before minting.",
         };
     }
+    //first - upload media to the pinata
     let data = new FormData();
     data.append('file', file);
     //make metadata
-    const metadata = new Object();
-    metadata.name = name;
-    metadata.description = description;
-    const metadataJson = JSON.stringify(metadata);
+    const pinataMetadata = new Object();
+    pinataMetadata.name = name;
+    pinataMetadata.description = description;
+    const metadataJson = JSON.stringify(pinataMetadata);
     data.append('pinataMetadata', metadataJson);
     //console.log(data);
-    const pinataResponse = await pinFileToIPFS(data);
-    if (!pinataResponse.success) {
+    const pinataMediaResponse = await pinFileToIPFS(data);
+    if (!pinataMediaResponse.success) {
         return {
             success: false,
             status: "😢 Something went wrong while uploading your tokenURI.",
         };
     }
+    const pinataMediaUrl = pinataMediaResponse.pinataUrl;
+    //now use pinJSONToIPFS to prepare appropriate NFT token object
+    //make metadata
+    const metadata = new Object();
+    metadata.name = name;
+    metadata.image = pinataMediaUrl;
+    metadata.description = description;
+
+    const pinataResponse = await pinJSONToIPFS(metadata);
     const tokenURI = pinataResponse.pinataUrl;
     console.log(tokenURI);
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);

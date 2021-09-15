@@ -69,7 +69,7 @@ const Minter = (props) => {
 
     return (
         <div className="Minter">
-            <button id="walletButton" onClick={connectWalletPressed}>
+            <button className="btn" id="walletButton" onClick={connectWalletPressed}>
                 {walletAddress.length > 0 ? (
                     "Connected: " +
                     String(walletAddress).substring(0, 6) +
@@ -88,6 +88,7 @@ const Minter = (props) => {
             <form>
                 <h2>🖼 Select asset: </h2>
                 <input
+                    className="input-file"
                     type="file"
                     onChange={(event) => setFile(event.target.files[0])}
                 />
@@ -110,10 +111,10 @@ const Minter = (props) => {
                     onChange={(event) => setDescription(event.target.value)}
                 />
             </form>
-            <button id="mintButton" onClick={onMintPressed}>
+            <button className="btn btn-success" id="mintButton" onClick={onMintPressed}>
                 Mint NFT
             </button>
-            <p id="status" style={{ color: "red" }}>
+            <p className="status" id="status" style={{ color: "red" }}>
                 {status}
             </p>
         </div>

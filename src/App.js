@@ -1,10 +1,21 @@
 import './App.css';
-import Minter from './Minter'
+import Minter from './Minter';
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+import Header from './Components/Header/Header.js';
 
 function App() {
   return (
     <div className="App">
-      <Minter></Minter>
+        <Router>
+            <Header />
+         {/*   <Minter></Minter>*/}
+            <Route path="/" exact component={Minter}/>
+            <Route path="/collected" component={Minter}/>
+            {/*<Route path="/1" render={() => <h2>Welcome to StarD22222</h2>} />
+            <Route path="/planets" component={PlanetsPage} />
+            <Route path="/starships" component={StarshipsPage} />*/}
+
+        </Router>
     </div>
   );
 }

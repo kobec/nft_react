@@ -1,9 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import './header.css';
 
 const Header = ({ onServiceChange }) => {
+    const location = useLocation();
+    //destructuring pathname from location
+    const { pathname } = location;
+    const splitLocation = pathname.split("/");
+
     return (
         <div className="header d-flex">
             <h3>
@@ -12,19 +17,13 @@ const Header = ({ onServiceChange }) => {
                 </Link>
             </h3>
             <ul className="d-flex">
-                <li>
+                <li className={splitLocation[1] === "" ? "active" : ""}>
                     <Link to="/">Mint U Media</Link>
                 </li>
-                <li>
+                <li className={splitLocation[1] === "collected" ? "active" : ""}>
                     <Link to="/collected">Collected</Link>
                 </li>
             </ul>
-
-            <button
-                onClick={onServiceChange}
-                className="btn btn-primary btn-sm">
-                Change Service
-            </button>
         </div>
     );
 };

@@ -30,9 +30,3 @@
     height: 2.2rem;
     margin-top: 3px;
 }
-
-.header ul li.active{
-    color: #fff;
-    background-color: #375a7f;
-    border-color: #375a7f;
-}

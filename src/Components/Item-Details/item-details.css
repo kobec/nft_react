@@ -1,0 +1,19 @@
+.item{
+    padding-top: 100px;
+}
+
+.item-img{
+    max-width: 500px;
+    max-height: 500px;
+    min-width: 300px;
+    min-height: 300px;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #f5f5f5
+}
+
+.item-wrap{
+    display: grid;
+    grid-template-columns: 0.8fr 1fr;
+    gap: 80px;
+}

@@ -1,6 +1,6 @@
 .header {
     margin-top: .5rem;
-    padding-left: 10px;
+    padding: 10px;
 }
 
 .header ul li {
@@ -8,6 +8,8 @@
     margin: 0;
     padding: .5rem 1rem;
     border-radius: 3px;
+    display: flex;
+    align-items: center;
 }
 
 .header ul li:hover {

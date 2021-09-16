@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import './header.css';
 
-const Header = ({ onServiceChange }) => {
+const Header = () => {
     const location = useLocation();
     //destructuring pathname from location
     const { pathname } = location;

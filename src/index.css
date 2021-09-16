@@ -56,6 +56,10 @@ h2{
     color: #fff;
 }
 
+ul {
+    margin: 0;
+}
+
 .Minter h2{
     margin-bottom: 15px;
 }

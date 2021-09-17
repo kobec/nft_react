@@ -17,3 +17,28 @@
     grid-template-columns: 0.8fr 1fr;
     gap: 80px;
 }
+
+.item-desc{
+    margin-top: 20px;
+}
+
+.item-info .btn-primary{
+    margin-right: 15px;
+}
+
+.item-info .btn{
+    width: 206px;
+    max-width: 100%;
+    padding: 10px;
+}
+
+.item-desc__text{
+    font-size: 18px;
+}
+
+.pagination{
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

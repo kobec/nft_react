@@ -1,9 +1,7 @@
 import React from 'react';
 import './item-details.css';
 
-const itemDetails = (props) => {
-
-    const { item } = props.location.state
+const ItemDetails = () => {
 
     return (
         <div className="item">
@@ -11,16 +9,18 @@ const itemDetails = (props) => {
                 <div className="item-img">
                     <img src="" alt=""></img>
                 </div>
-                <div className="item-name">
+                <div className="item-info">
                     <p>Name</p>
-                    <p>{item}</p>
+                    <button type="button" className="btn btn-primary">Buy</button>
+                    <button type="button" className="btn btn-secondary">Send</button>
                 </div>
             </div>
-            <div className="">
+            <div className="item-desc">
                 <p>Desc</p>
+                <p className="item-desc__text">Some text desc</p>
             </div>
         </div>
     );
 }
 
-export default itemDetails;
+export default ItemDetails;

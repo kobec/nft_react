@@ -24,8 +24,6 @@ const Collected = () => {
 
     const HandleResponse = () => {
 
-        console.log("nft: ", nft);
-
         return (
             <div className="nft-list">
                 {nft.map(item => (
@@ -38,7 +36,7 @@ const Collected = () => {
                         <Link to={`/assets/${item.contract_address}/${item.token_id}`}
                             className="nft-item__link">
                             Go to Item
-                    </Link>
+                        </Link>
                     </div>
                 ))}
             </div>
@@ -47,12 +45,22 @@ const Collected = () => {
 
     const HandlePagination = () => {
 
+        let foo = [];
+
+        for (let i = 1; i <= pagination.pages; i++) {
+            foo.push(i);
+        }
+
         return (
             <nav aria-label="Page navigation">
                 <ul className="pagination">
-                    <li className="page-item">
-                        <a className="page-link" href="#">1</a>
-                    </li>
+                    {Array.from((foo), (i) => {
+                        return (
+                            <li className="page-item" key={i}>
+                                <Link className="page-link" to={`/collected/${i}`}>{i}</Link>
+                            </li>
+                        )
+                    })}
                 </ul>
             </nav>
         )

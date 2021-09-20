@@ -6,6 +6,8 @@ import {
     mintNFTFromSelectedFile
 } from "./util/interact.js";
 
+import { LogInWithMetaMask } from './util/metamask.js';
+
 const Minter = (props) => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
@@ -69,17 +71,23 @@ const Minter = (props) => {
 
     return (
         <div className="Minter">
-            <button className="btn" id="walletButton" onClick={connectWalletPressed}>
-                {walletAddress.length > 0 ? (
-                    "Connected: " +
-                    String(walletAddress).substring(0, 6) +
-                    "..." +
-                    String(walletAddress).substring(38)
-                ) : (
-                    <span>Connect Wallet</span>
-                )}
-            </button>
-
+            <div className="d-flex justify-content-between">
+                <div>
+                    <LogInWithMetaMask />
+                </div>
+                <div>
+                    <button className="btn" id="walletButton" onClick={connectWalletPressed}>
+                        {walletAddress.length > 0 ? (
+                            "Connected: " +
+                            String(walletAddress).substring(0, 6) +
+                            "..." +
+                            String(walletAddress).substring(38)
+                        ) : (
+                            <span>Connect Wallet</span>
+                        )}
+                    </button>
+                </div>
+            </div>
             <br></br>
             <h1 id="title">🧙‍♂️ Alchemy NFT Minter</h1>
             <p>

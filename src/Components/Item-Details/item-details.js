@@ -10,12 +10,14 @@ const ItemDetails = () => {
     const [loading, setLoading] = useState(true);
     const [disabled, setDisabled] = useState(true);
 
+    const { contract_address, token_id } = useParams();
+
     const fetcher = new FetcherService();
 
     useEffect(() => {
-        fetcher.getCollected()
+        fetcher.getNftItem(contract_address, token_id)
             .then((response) => {
-                setNft(response.items);
+                setNft(response);
                 setLoading(false);
             });
     }, []);
@@ -26,18 +28,14 @@ const ItemDetails = () => {
 
     const RenderItem = () => {
 
-        const { token_id, contract_address } = useParams();
-
-        const selectedNft = nft.find(element => element.contract_address.toLowerCase() === contract_address.toLowerCase() && element.token_id.toLowerCase() === token_id.toLowerCase());
-
         return (
             <div className="item">
                 <div className="item-wrap">
                     <div className="item-img">
-                        <img src={selectedNft.token_data.image} alt=""></img>
+                        <img src={nft.token_data.image} alt=""></img>
                     </div>
                     <div className="item-info">
-                        <p>{selectedNft.token_data.name}</p>
+                        <p>{nft.token_data.name}</p>
                         <button type="button" className="btn btn-primary">Buy</button>
                         <button
                             type="button"
@@ -54,7 +52,7 @@ const ItemDetails = () => {
                     </div>
                     <div className="item-desc">
                         <p>Desc</p>
-                        <p className="item-desc__text">{selectedNft.token_data.description}</p>
+                        <p className="item-desc__text">{nft.token_data.description}</p>
                     </div>
                 </div>
             </div>

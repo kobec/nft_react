@@ -15,7 +15,7 @@ function App() {
                 <Header />
                 <Route path="/" exact component={Minter} />
                 <Route path="/collected/" component={Collected} />
-                <Route path="/assets/:id" component={ItemDetails} />
+                <Route path="/assets/:contract_address/:token_id" component={ItemDetails} />
             </Router>
         </div>
     );

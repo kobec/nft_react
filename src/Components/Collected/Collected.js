@@ -13,7 +13,7 @@ const Collected = () => {
 
     let fetcher = new FetcherService();
 
-    useEffect(async () => {
+    useEffect(() => {
         fetcher.getCollected()
             .then((response) => {
                 setNft(response.items);
@@ -21,6 +21,15 @@ const Collected = () => {
                 setLoading(false);
             });
     }, []);
+
+    const handleClick = (id) => {
+        setLoading(true);
+        fetcher.getCollectedPage(id)
+            .then((response) => {
+                setNft(response.items);
+                setLoading(false);
+            });
+    }
 
     const HandleResponse = () => {
 
@@ -57,7 +66,12 @@ const Collected = () => {
                     {Array.from((foo), (i) => {
                         return (
                             <li className="page-item" key={i}>
-                                <Link className="page-link" to={`/collected/${i}`}>{i}</Link>
+                                <button
+                                    type="button"
+                                    className="page-link"
+                                    onClick={() => handleClick(i)}>
+                                    {i}
+                                </button>
                             </li>
                         )
                     })}

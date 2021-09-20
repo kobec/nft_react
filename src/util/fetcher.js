@@ -18,9 +18,14 @@ export default class FetcherService {
         return res;
     };
 
-    getNftItem = async (contract_address, token_id) => {
-        const res = await this.getResource(`/assets/${contract_address}/${token_id}`);
+    getCollectedPage = async (id) => {
+        const res = await this.getResource(`/collected?page=${id}`);
         return res;
     };
+
+    // getNftItem = async (contract_address, token_id) => {
+    //     const res = await this.getResource(`/assets/${contract_address}/${token_id}`);
+    //     return res;
+    // };
 
 };

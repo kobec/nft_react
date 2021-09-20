@@ -8,6 +8,7 @@ const ItemDetails = () => {
 
     const [nft, setNft] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [disabled, setDisabled] = useState(true);
 
     const fetcher = new FetcherService();
 
@@ -19,11 +20,16 @@ const ItemDetails = () => {
             });
     }, []);
 
-    const { token_id, contract_address } = useParams();
-
-    const selectedNft = nft.find(element => element.contract_address.toLowerCase() === contract_address.toLowerCase() && element.token_id.toLowerCase() === token_id.toLowerCase());
+    const showInputBlock = () => {
+        setDisabled(!disabled);
+    }
 
     const RenderItem = () => {
+
+        const { token_id, contract_address } = useParams();
+
+        const selectedNft = nft.find(element => element.contract_address.toLowerCase() === contract_address.toLowerCase() && element.token_id.toLowerCase() === token_id.toLowerCase());
+
         return (
             <div className="item">
                 <div className="item-wrap">
@@ -33,12 +39,23 @@ const ItemDetails = () => {
                     <div className="item-info">
                         <p>{selectedNft.token_data.name}</p>
                         <button type="button" className="btn btn-primary">Buy</button>
-                        <button type="button" className="btn btn-secondary">Send</button>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => showInputBlock()}>
+                            Send
+                        </button>
+                        <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
+                            <input type="text" className="form-control" placeholder="Enter email" />
+                            <div className="input-group-append">
+                                <button className="btn btn-success" type="button">Confirm</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="item-desc">
-                    <p>Desc</p>
-                    <p className="item-desc__text">{selectedNft.token_data.description}</p>
+                    <div className="item-desc">
+                        <p>Desc</p>
+                        <p className="item-desc__text">{selectedNft.token_data.description}</p>
+                    </div>
                 </div>
             </div>
         )
@@ -49,8 +66,8 @@ const ItemDetails = () => {
 
     return (
         <React.Fragment>
-            { spinner}
-            { hasData}
+            {spinner}
+            {hasData}
         </React.Fragment>
     );
 }

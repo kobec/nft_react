@@ -48,12 +48,6 @@ const Minter = () => {
         }
     }
 
-    const onSendPressed = async () => {
-        let addrToSent='0x0D92fD1ffAE469FE04bdCE0b8cBF941C1520A2B0';
-        const { success, status } = await transferToken(addrToSent);
-        console.log(success,status);
-    }
-
     const onMintPressed = async () => {
         //const { success, status } = await mintNFT(url, name, description, file);
         const { success, status } = await mintNFTFromSelectedFile(file, name, description);
@@ -100,9 +94,6 @@ const Minter = () => {
             </form>
             <button className="btn btn-success" id="mintButton" onClick={onMintPressed}>
                 Mint NFT
-            </button>
-            <button className="btn btn-success" id="mintButton" onClick={onSendPressed}>
-                Send NFT
             </button>
             <p className="status" id="status" style={{ color: "red" }}>
                 {status}

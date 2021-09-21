@@ -1,4 +1,4 @@
-import {pinJSONToIPFS,pinFileToIPFS} from "./pinata.js";
+import {pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
 
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
@@ -93,13 +93,58 @@ async function loadContract() {
     return new web3.eth.Contract(contractABI, contractAddress);
 }
 
-export const mintNFT = async (url, name, description) => {
-  if (url.trim() == "" || name.trim() == "" || description.trim() == "") {
-    return {
-      success: false,
-      status: "❗Please make sure all fields are completed before minting.",
+export const tokenOwner = async (contract, token_id) => {
+    window.contract = await new web3.eth.Contract(contractABI, contract);
+    return window.contract.methods.ownerOf(token_id).call();
+}
+
+
+export const transferToken = async (toAddress) => {
+    if (toAddress.trim() == "") {
+        return {
+            success: false,
+            status: "❗Please make sure all fields are completed before minting.",
+        };
+    }
+    window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    const transactionParameters = {
+        to: contractAddress, // Required except during contract publications.
+        from: window.ethereum.selectedAddress, // must match user's active address.
+        data: window.contract.methods
+            .transferFrom(window.ethereum.selectedAddress, toAddress, 3)
+            .encodeABI(),
     };
-  }
+
+    try {
+        const txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [transactionParameters],
+        });
+        return {
+            success: true,
+            status:
+                "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+                txHash,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            status: "😥 Something went wrong: " + error.message,
+        };
+    }
+    return {
+        success: false,
+        status: "test",
+    }
+}
+
+export const mintNFT = async (url, name, description) => {
+    if (url.trim() == "" || name.trim() == "" || description.trim() == "") {
+        return {
+            success: false,
+            status: "❗Please make sure all fields are completed before minting.",
+        };
+    }
 
     //make metadata
     const metadata = new Object();

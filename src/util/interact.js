@@ -1,4 +1,4 @@
-import {pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
+import { pinJSONToIPFS, pinFileToIPFS } from "./pinata.js";
 
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
@@ -7,7 +7,7 @@ const contractABI = require("../contract-abi.json");
 //const contractAddress = "0x88a9780Fb8077c40CF02402a8eea829abE63F286";//ownable
 //const contractAddress = "0xfaCf2DeE4197560D74E26C1158D17152b5384F2e";
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
-const {createAlchemyWeb3} = require("@alch/alchemy-web3");
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 //const fs = require('fs');
 
@@ -33,15 +33,15 @@ export const connectWallet = async () => {
             address: "",
             status: (
                 <span>
-          <p>
-            {" "}
+                    <p>
+                        {" "}
               🦊{" "}
-              <a target="_blank" href={`https://metamask.io/download.html`}>
-              You must install Metamask, a virtual Ethereum wallet, in your
-              browser.
+                        <a target="_blank" href={`https://metamask.io/download.html`}>
+                            You must install Metamask, a virtual Ethereum wallet, in your
+                            browser.
             </a>
-          </p>
-        </span>
+                    </p>
+                </span>
             ),
         };
     }
@@ -75,23 +75,23 @@ export const getCurrentWalletConnected = async () => {
             address: "",
             status: (
                 <span>
-          <p>
-            {" "}
+                    <p>
+                        {" "}
               🦊{" "}
-              <a target="_blank" href={`https://metamask.io/download.html`}>
-              You must install Metamask, a virtual Ethereum wallet, in your
-              browser.
+                        <a target="_blank" href={`https://metamask.io/download.html`}>
+                            You must install Metamask, a virtual Ethereum wallet, in your
+                            browser.
             </a>
-          </p>
-        </span>
+                    </p>
+                </span>
             ),
         };
     }
 };
 
-async function loadContract() {
-    return new web3.eth.Contract(contractABI, contractAddress);
-}
+// async function loadContract() {
+//     return new web3.eth.Contract(contractABI, contractAddress);
+// }
 
 export const tokenOwner = async (contract, token_id) => {
     window.contract = await new web3.eth.Contract(contractABI, contract);
@@ -100,7 +100,7 @@ export const tokenOwner = async (contract, token_id) => {
 
 
 export const transferToken = async (toAddress) => {
-    if (toAddress.trim() == "") {
+    if (toAddress.trim() === "") {
         return {
             success: false,
             status: "❗Please make sure all fields are completed before minting.",
@@ -132,6 +132,7 @@ export const transferToken = async (toAddress) => {
             status: "😥 Something went wrong: " + error.message,
         };
     }
+    
     return {
         success: false,
         status: "test",
@@ -139,7 +140,7 @@ export const transferToken = async (toAddress) => {
 }
 
 export const mintNFT = async (url, name, description) => {
-    if (url.trim() == "" || name.trim() == "" || description.trim() == "") {
+    if (url.trim() === "" || name.trim() === "" || description.trim() === "") {
         return {
             success: false,
             status: "❗Please make sure all fields are completed before minting.",
@@ -193,7 +194,7 @@ export const mintNFT = async (url, name, description) => {
 
 
 export const mintNFTFromSelectedFile = async (file, name, description) => {
-    if (!file || name.trim() == "" || description.trim() == "") {
+    if (!file || name.trim() === "" || description.trim() === "") {
         return {
             success: false,
             status: "❗Please make sure all fields are completed before minting.",

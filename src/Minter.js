@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-    connectWallet,
     getCurrentWalletConnected,
-    mintNFT,
     transferToken,
     mintNFTFromSelectedFile
 } from "./util/interact.js";
 
-import { LogInWithMetaMask } from './util/metamask.js';
-
-const Minter = (props) => {
+const Minter = () => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
 
@@ -52,12 +48,6 @@ const Minter = (props) => {
         }
     }
 
-    const connectWalletPressed = async () => {
-        const walletResponse = await connectWallet();
-        setStatus(walletResponse.status);
-        setWallet(walletResponse.address);
-    };
-
     const onSendPressed = async () => {
         let addrToSent='0x0D92fD1ffAE469FE04bdCE0b8cBF941C1520A2B0';
         const { success, status } = await transferToken(addrToSent);
@@ -78,24 +68,6 @@ const Minter = (props) => {
 
     return (
         <div className="Minter">
-            <div className="d-flex justify-content-between">
-                <div>
-                    <LogInWithMetaMask />
-                </div>
-                <div>
-                    <button className="btn" id="walletButton" onClick={connectWalletPressed}>
-                        {walletAddress.length > 0 ? (
-                            "Connected: " +
-                            String(walletAddress).substring(0, 6) +
-                            "..." +
-                            String(walletAddress).substring(38)
-                        ) : (
-                            <span>Connect Wallet</span>
-                        )}
-                    </button>
-                </div>
-            </div>
-            <br></br>
             <h1 id="title">🧙‍♂️ Alchemy NFT Minter</h1>
             <p>
                 Simply add your asset's link, name, and description, then press "Mint."

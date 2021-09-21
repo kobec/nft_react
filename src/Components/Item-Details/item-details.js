@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import FetcherService from '../../util/fetcher';
 import './item-details.css';
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
+import {getCurrentWalletConnected, tokenOwner} from "../../util/interact.js";
 import Spinner from '../Spinner/spinner';
 
 const ItemDetails = () => {
+
+    const [walletAddress, setWallet] = useState("");
+    const [status, setStatus] = useState("");
+    const [isItemOwner, setIsItemOwner] = useState(false);
 
     const [nft, setNft] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -20,6 +25,14 @@ const ItemDetails = () => {
                 setNft(response);
                 setLoading(false);
             });
+        getCurrentWalletConnected().then((answer)=>{
+            setWallet(answer.address);
+            setStatus(answer.status);
+            tokenOwner(contract_address, token_id).then(function (owner) {
+                let bl=answer.address.toUpperCase()===owner.toUpperCase();
+                setIsItemOwner(bl);
+            });
+        });
     }, []);
 
     const showInputBlock = () => {
@@ -27,6 +40,7 @@ const ItemDetails = () => {
     }
 
     const RenderItem = () => {
+
 
         return (
             <div className="item">
@@ -37,18 +51,23 @@ const ItemDetails = () => {
                     <div className="item-info">
                         <p>{nft.token_data.name}</p>
                         <button type="button" className="btn btn-primary">Buy</button>
-                        <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={() => showInputBlock()}>
-                            Send
-                        </button>
-                        <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
-                            <input type="text" className="form-control" placeholder="Enter email" />
-                            <div className="input-group-append">
-                                <button className="btn btn-success" type="button">Confirm</button>
+                        {isItemOwner?(
+                            <div>
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => showInputBlock()}>
+                                    Send
+                                </button>
+                                <div className="input-group" style={disabled ? {display: 'none'} : {display: 'flex'}}>
+                                    <input type="text" className="form-control" placeholder="Enter email"/>
+                                    <div className="input-group-append">
+                                        <button className="btn btn-success" type="button">Confirm</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ):''}
+
                     </div>
                     <div className="item-desc">
                         <p>Desc</p>

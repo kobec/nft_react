@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LogInWithMetaMask } from '../../util/metamask';
 import {
+    getCurrentWalletConnected,
     connectWallet,
 } from "../../util/interact.js";
 
@@ -15,6 +16,14 @@ const Header = () => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
     const splitLocation = pathname.split("/");
+
+    useEffect(async () => {
+        const { address, status } = await getCurrentWalletConnected();
+
+        setWallet(address);
+        setStatus(status);
+
+    }, []);
 
     const connectWalletPressed = async () => {
         const walletResponse = await connectWallet();

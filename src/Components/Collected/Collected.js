@@ -80,13 +80,11 @@ const Collected = () => {
         )
     };
 
-    const spinner = loading ? <Spinner /> : null;
-    const hasData = !loading ? <HandleResponse /> : null;
+    const spinner = loading ? <Spinner /> : <HandleResponse />;
 
     return (
         <div>
             {spinner}
-            {hasData}
             <HandlePagination />
         </div>
     );

@@ -25,6 +25,7 @@ const ItemDetails = () => {
                 setNft(response);
                 setLoading(false);
             });
+
         getCurrentWalletConnected().then((answer) => {
             setWallet(answer.address);
             setStatus(answer.status);
@@ -41,7 +42,6 @@ const ItemDetails = () => {
 
     const RenderItem = () => {
 
-
         return (
             <div className="item">
                 <div className="item-wrap">
@@ -52,7 +52,7 @@ const ItemDetails = () => {
                         <p>{nft.token_data.name}</p>
                         <div className="d-flex">
                             <button type="button" className="btn btn-primary">Buy</button>
-                            {isItemOwner &&
+                            {1 &&
                                 <div>
                                     <button
                                         type="button"
@@ -79,13 +79,11 @@ const ItemDetails = () => {
         )
     };
 
-    const spinner = loading ? <Spinner /> : null;
-    const hasData = !loading ? <RenderItem /> : null;
+    const spinner = loading ? <Spinner /> : <RenderItem />;
 
     return (
         <React.Fragment>
             {spinner}
-            {hasData}
         </React.Fragment>
     );
 }

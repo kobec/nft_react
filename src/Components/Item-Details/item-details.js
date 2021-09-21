@@ -73,15 +73,21 @@ const ItemDetails = () => {
                             </div>
                         }
                     </div>
-                    <div className="item-desc">
-                        <p className="item-owner-title"><span>Owner: </span>{itemOwner}</p>
-                        <p>Desc</p>
-                        <p className="item-desc__text">{nft.token_data?nft.token_data.description:''}</p>
+                    <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
+                        <input type="text"
+                            className="form-control"
+                            placeholder="Enter ether wallet address"
+                            onChange={(event) => setSendAddress(event.target.value)}
+                        />
+                        <div className="input-group-append">
+                            <button onClick={onSendPressed} className="btn btn-success" type="button">Confirm</button>
+                        </div>
                     </div>
-                </div>
-                <div className="item-desc">
-                    <p>Desc</p>
-                    <p className="item-desc__text">{nft.token_data ? nft.token_data.description : ''}</p>
+                    <div className="item-desc">
+                        <p className="item-desc__owner"><span>Owner: </span>{itemOwner}</p>
+                        <p>Desc</p>
+                        <p className="item-desc__text">{nft.token_data ? nft.token_data.description : ''}</p>
+                    </div>
                 </div>
             </div>
         </div>

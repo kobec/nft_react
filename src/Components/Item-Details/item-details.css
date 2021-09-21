@@ -7,10 +7,12 @@
     max-height: 500px;
     min-width: 300px;
     min-height: 300px;
-    height: 100%;
+    height: max-content;
     width: 100%;
     border: 1px solid #f5f5f5;
     padding: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .item-img img{
@@ -64,4 +66,12 @@
 .input-group input{
     height: 44px;
     border: none;
+}
+
+.item-desc__owner{
+    font-size: 14px;
+}
+
+.item-desc__owner span{
+    font-size: 20px;
 }

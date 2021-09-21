@@ -5,10 +5,15 @@ import { useParams } from "react-router-dom";
 import { getCurrentWalletConnected, tokenOwner, transferToken } from "../../util/interact.js";
 import Spinner from '../Spinner/spinner';
 
-const ItemDetails = () => {
-
+const RenderItem = () => {
+    
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
+
+    const [loading, setLoading] = useState(true);
+
+    const spinner = loading ? <Spinner /> : <RenderItem />;
+
     const [isItemOwner, setIsItemOwner] = useState(false);
     const [itemOwner, setItemOwner] = useState("");
 
@@ -16,7 +21,7 @@ const ItemDetails = () => {
     const [sendStatus, setSendStatus] = useState("");
 
     const [nft, setNft] = useState([]);
-    const [loading, setLoading] = useState(true);
+
     const [disabled, setDisabled] = useState(true);
 
     const { contract_address, token_id } = useParams();
@@ -41,23 +46,19 @@ const ItemDetails = () => {
         });
     }, []);
 
-    const showInputBlock = () => {
-        setDisabled(!disabled);
-    }
+    const showInputBlock = () => setDisabled(!disabled);
 
     const onSendPressed = async () => {
-        if(itemOwner.toUpperCase()===sendAddress.toUpperCase()){
+        if (itemOwner.toUpperCase() === sendAddress.toUpperCase()) {
             setSendStatus("❗You cannot send your NFT to yourself");
             return;
         }
-        const { success, status } = await transferToken(sendAddress,token_id);
+        const { success, status } = await transferToken(sendAddress, token_id);
         setSendStatus(status);
         if (success) {
             setSendAddress("");
         }
     }
-
-    // const RenderItem = () => {
 
     return (
         <div className="item">
@@ -68,29 +69,29 @@ const ItemDetails = () => {
                 <div className="item-info">
                     <p>{nft.token_data ? nft.token_data.name : ''}</p>
                     <div className="d-flex">
-                            {isItemOwner  ?
+                        {1 ?
                             <div>
                                 <button type="button" className="btn btn-primary">Buy</button>
                                 <button
                                     type="button"
                                     className="btn btn-secondary"
-                                    onClick={() => showInputBlock()}>
+                                    onClick={showInputBlock}>
                                     Send
                                 </button>
-
-                                <div className="input-group" style={disabled ? {display: 'none'} : {display: 'flex'}}>
+                                <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
                                     <input type="text"
-                                           className="form-control"
-                                           placeholder="Enter ether wallet address"
-                                           onChange={(event) => setSendAddress(event.target.value)}
+                                        className="form-control"
+                                        placeholder="Enter ether wallet address"
+                                        onChange={(event) => setSendAddress(event.target.value)}
                                     />
                                     <div className="input-group-append">
                                         <button onClick={onSendPressed} className="btn btn-success" type="button">Confirm</button>
                                     </div>
                                 </div>
                             </div>
-                            :<button type="button" className="btn btn-primary">Buy</button>
-                            }
+                            :
+                            <button type="button" className="btn btn-primary">Buy</button>
+                        }
                     </div>
                     <div className="status" id="status" style={{ color: "red" }}>
                         {sendStatus}
@@ -104,15 +105,15 @@ const ItemDetails = () => {
             </div>
         </div>
     )
-    // }
+}
 
-/*
-    const spinner = loading ? <Spinner /> : <RenderItem />;
+const ItemDetails = () => {
+
     return (
         <React.Fragment>
-            {spinner}
+            <RenderItem />
         </React.Fragment>
-    );*/
+    )
 }
 
 

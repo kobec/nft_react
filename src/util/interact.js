@@ -99,23 +99,23 @@ export const tokenOwner = async (contract, token_id) => {
 }
 
 
-export const transferToken = async (toAddress) => {
+export const transferToken = async (toAddress, tokenId) => {
     if (toAddress.trim() === "") {
         return {
             success: false,
-            status: "❗Please make sure all fields are completed before minting.",
+            status: "❗Please enter valid wallet address",
         };
     }
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);
-    const transactionParameters = {
-        to: contractAddress, // Required except during contract publications.
-        from: window.ethereum.selectedAddress, // must match user's active address.
-        data: window.contract.methods
-            .transferFrom(window.ethereum.selectedAddress, toAddress, 3)
-            .encodeABI(),
-    };
 
     try {
+        const transactionParameters = {
+            to: contractAddress, // Required except during contract publications.
+            from: window.ethereum.selectedAddress, // must match user's active address.
+            data: window.contract.methods
+                .transferFrom(window.ethereum.selectedAddress, toAddress, tokenId)
+                .encodeABI(),
+        };
         const txHash = await window.ethereum.request({
             method: "eth_sendTransaction",
             params: [transactionParameters],

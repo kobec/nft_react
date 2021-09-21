@@ -10,9 +10,10 @@ const ItemDetails = () => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
     const [isItemOwner, setIsItemOwner] = useState(false);
-    const [itemOwner, setItemOwner] = useState(false);
+    const [itemOwner, setItemOwner] = useState("");
 
     const [sendAddress, setSendAddress] = useState("");
+    const [sendStatus, setSendStatus] = useState("");
 
     const [nft, setNft] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,9 +46,15 @@ const ItemDetails = () => {
     }
 
     const onSendPressed = async () => {
-        let addrToSent = '0x0D92fD1ffAE469FE04bdCE0b8cBF941C1520A2B0';
-        const { success, status } = await transferToken(addrToSent);
-        console.log(success, status);
+        if(itemOwner.toUpperCase()===sendAddress.toUpperCase()){
+            setSendStatus("❗You cannot send your NFT to yourself");
+            return;
+        }
+        const { success, status } = await transferToken(sendAddress,token_id);
+        setSendStatus(status);
+        if (success) {
+            setSendAddress("");
+        }
     }
 
     // const RenderItem = () => {
@@ -61,27 +68,32 @@ const ItemDetails = () => {
                 <div className="item-info">
                     <p>{nft.token_data ? nft.token_data.name : ''}</p>
                     <div className="d-flex">
-                        <button type="button" className="btn btn-primary">Buy</button>
-                        {1 &&
+                            {isItemOwner  ?
                             <div>
+                                <button type="button" className="btn btn-primary">Buy</button>
                                 <button
                                     type="button"
                                     className="btn btn-secondary"
                                     onClick={() => showInputBlock()}>
                                     Send
                                 </button>
+
+                                <div className="input-group" style={disabled ? {display: 'none'} : {display: 'flex'}}>
+                                    <input type="text"
+                                           className="form-control"
+                                           placeholder="Enter ether wallet address"
+                                           onChange={(event) => setSendAddress(event.target.value)}
+                                    />
+                                    <div className="input-group-append">
+                                        <button onClick={onSendPressed} className="btn btn-success" type="button">Confirm</button>
+                                    </div>
+                                </div>
                             </div>
-                        }
+                            :<button type="button" className="btn btn-primary">Buy</button>
+                            }
                     </div>
-                    <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
-                        <input type="text"
-                            className="form-control"
-                            placeholder="Enter ether wallet address"
-                            onChange={(event) => setSendAddress(event.target.value)}
-                        />
-                        <div className="input-group-append">
-                            <button onClick={onSendPressed} className="btn btn-success" type="button">Confirm</button>
-                        </div>
+                    <div className="status" id="status" style={{ color: "red" }}>
+                        {sendStatus}
                     </div>
                     <div className="item-desc">
                         <p className="item-desc__owner"><span>Owner: </span>{itemOwner}</p>
@@ -94,13 +106,13 @@ const ItemDetails = () => {
     )
     // }
 
-    // const spinner = loading ? <Spinner /> : <RenderItem />;
-
-    // return (
-    //     <React.Fragment>
-    //         {spinner}
-    //     </React.Fragment>
-    // )
+/*
+    const spinner = loading ? <Spinner /> : <RenderItem />;
+    return (
+        <React.Fragment>
+            {spinner}
+        </React.Fragment>
+    );*/
 }
 
 

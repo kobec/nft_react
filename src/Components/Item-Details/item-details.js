@@ -10,6 +10,7 @@ const ItemDetails = () => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
     const [isItemOwner, setIsItemOwner] = useState(false);
+    const [itemOwner, setItemOwner] = useState(false);
 
     const [sendAddress, setSendAddress] = useState("");
 
@@ -33,6 +34,7 @@ const ItemDetails = () => {
             tokenOwner(contract_address, token_id).then(function (owner) {
                 let bl = answer.address.toUpperCase() === owner.toUpperCase();
                 setIsItemOwner(bl);
+                setItemOwner(owner.toUpperCase());
             });
         });
     }, []);
@@ -83,6 +85,7 @@ const ItemDetails = () => {
 
                     </div>
                     <div className="item-desc">
+                        <p className="item-owner-title"><span>Owner: </span>{itemOwner}</p>
                         <p>Desc</p>
                         <p className="item-desc__text">{nft.token_data?nft.token_data.description:''}</p>
                     </div>

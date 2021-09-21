@@ -10,6 +10,7 @@ const ItemDetails = () => {
     const [walletAddress, setWallet] = useState("");
     const [status, setStatus] = useState("");
     const [isItemOwner, setIsItemOwner] = useState(false);
+    const [itemOwner, setItemOwner] = useState(false);
 
     const [sendAddress, setSendAddress] = useState("");
 
@@ -34,6 +35,7 @@ const ItemDetails = () => {
             tokenOwner(contract_address, token_id).then(function (owner) {
                 let bl = answer.address.toUpperCase() === owner.toUpperCase();
                 setIsItemOwner(bl);
+                setItemOwner(owner.toUpperCase());
             });
         });
     }, []);
@@ -71,15 +73,10 @@ const ItemDetails = () => {
                             </div>
                         }
                     </div>
-                    <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
-                        <input type="text"
-                            className="form-control"
-                            placeholder="Enter ether wallet address"
-                            onChange={(event) => setSendAddress(event.target.value)}
-                        />
-                        <div className="input-group-append">
-                            <button onClick={onSendPressed} className="btn btn-success" type="button">Confirm</button>
-                        </div>
+                    <div className="item-desc">
+                        <p className="item-owner-title"><span>Owner: </span>{itemOwner}</p>
+                        <p>Desc</p>
+                        <p className="item-desc__text">{nft.token_data?nft.token_data.description:''}</p>
                     </div>
                 </div>
                 <div className="item-desc">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
     getCurrentWalletConnected,
-    transferToken,
     mintNFTFromSelectedFile
 } from "./util/interact.js";
 

@@ -13,18 +13,19 @@ const ItemDetails = () => {
     const [itemOwner, setItemOwner] = useState("");
 
     const [sendAddress, setSendAddress] = useState("");
+    const [sendPrice, setSendPrice] = useState("");
     const [sendStatus, setSendStatus] = useState("");
 
     const [nft, setNft] = useState([]);
     const [loading, setLoading] = useState(true);
     const [disabled, setDisabled] = useState(true);
+    const [disabledPrice, setDisabledPrice] = useState(true);
 
     const { contract_address, token_id } = useParams();
 
     const fetcher = new FetcherService();
 
     useEffect(() => {
-        console.log("Loh");
         fetcher.getNftItem(contract_address, token_id)
             .then((response) => {
                 setNft(response);
@@ -42,15 +43,19 @@ const ItemDetails = () => {
         });
     }, []);
 
-    const showInputBlock = () => setDisabled(!disabled);
+    const showSendBlock = () => setDisabled(!disabled);
+    const showPriceBlock = () => setDisabledPrice(!disabledPrice);
 
     const onSendPressed = async () => {
         if (itemOwner.toUpperCase() === sendAddress.toUpperCase()) {
             setSendStatus("❗You cannot send your NFT to yourself");
             return;
         }
+
         const { success, status } = await transferToken(sendAddress, token_id);
+
         setSendStatus(status);
+
         if (success) {
             setSendAddress("");
         }
@@ -74,7 +79,7 @@ const ItemDetails = () => {
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary"
-                                                onClick={() => showInputBlock()}>
+                                                onClick={() => showSendBlock()}>
                                                 Send
                                             </button>
                                             <div className="input-group" style={disabled ? { display: 'none' } : { display: 'flex' }}>
@@ -94,6 +99,31 @@ const ItemDetails = () => {
                                 </div>
                                 <div className="status" id="status" style={{ color: "red" }}>
                                     {sendStatus}
+                                </div>
+                                <div className="d-flex">
+                                    {1 ?
+                                        <div>
+                                            <button type="button" className="btn btn-primary">Disallow</button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => showPriceBlock()}>
+                                                Allow
+                                            </button>
+                                            <div className="input-group" style={disabledPrice ? { display: 'none' } : { display: 'flex' }}>
+                                                <input type="text"
+                                                    className="form-control"
+                                                    placeholder="Enter ether wallet address"
+                                                    onChange={(event) => setSendPrice(event.target.value)}
+                                                />
+                                                <div className="input-group-append">
+                                                    <button className="btn btn-success" type="button">Confirm</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        :
+                                        <button type="button" className="btn btn-primary">Buy</button>
+                                    }
                                 </div>
                                 <div className="item-desc">
                                     <p className="item-desc__owner"><span>Owner: </span>{itemOwner}</p>

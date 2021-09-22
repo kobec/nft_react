@@ -42,10 +42,6 @@ input:focus {
   padding-top: 32px;
 }
 
-#status {
-  color:red;
-}
-
 h1{
     font-size: 34px;
     color: #fff;
@@ -78,7 +74,9 @@ ul {
 }
 
 .status{
-    margin-top: 20px;
+    margin: 20px 0;
+    color:red;
+
 }
 
 p{

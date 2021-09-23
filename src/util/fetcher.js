@@ -4,7 +4,21 @@ export default class FetcherService {
     _apiBase = process.env.REACT_APP_API_BASE;
 
     getResource = async (url) => {
-        const res = await fetch(`${this._apiBase}${url}`);
+        const JWTToken = localStorage.getItem('JWTToken');
+
+        if (! JWTToken) {
+            window.alert('Error, please log in!');
+            window.location.href = '/';
+        }
+
+        const res = await fetch(`${this._apiBase}${url}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + JWTToken,
+            },
+            method: 'GET',
+        });
 
         if (!res.ok) {
             throw new Error(`Could not fetch ${url}` +

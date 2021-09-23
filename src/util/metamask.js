@@ -2,12 +2,17 @@ import Web3 from 'web3';
 
 let web3 = Web3 | undefined; // Will hold the web3 instance
 
+const apiBaseUrl = process.env.REACT_APP_API_BASE;
+
+const JWTToken = localStorage.getItem('JWTToken');
+
 const signMessage = 'I am signing my one-time nonce: ';
 
 const handleAuthenticate = ({ network_identity, signature }) =>
-    fetch(`${process.env.REACT_APP_API_BASE}/metamask/auth`, {
+    fetch(`${apiBaseUrl}/metamask/auth`, {
         body: JSON.stringify({ network_identity, signature }),
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         method: 'POST',
@@ -30,9 +35,10 @@ const handleSignMessage = async ({ network_identity, network_nonce }) => {
 };
 
 const handleSignup = (network_identity) =>
-    fetch(`${process.env.REACT_APP_API_BASE}/metamask/signup`, {
+    fetch(`${apiBaseUrl}/metamask/signup`, {
         body: JSON.stringify({ network_identity }),
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         method: 'POST',
@@ -41,14 +47,14 @@ const handleSignup = (network_identity) =>
 const onLoggedIn = (data) => {
     const { token } = data;
 
-    console.log(data);
-
     if (token) {
-        window.alert('Authorization was successful!');
+        localStorage.setItem('JWTToken', token);
+
+        window.location.href = '/';
     }
 };
 
-const handleClick = async () => {
+const handleClickLogIn = async () => {
     // Check if MetaMask is installed
     if (! window.ethereum) {
         window.alert('Please install MetaMask first.');
@@ -79,9 +85,13 @@ const handleClick = async () => {
     const publicAddress = coinbase.toLowerCase();
 
     // Look if user with current publicAddress is already present on backend
-    fetch(
-        `${process.env.REACT_APP_API_BASE}/metamask/user/${publicAddress}`
-    )
+    fetch(`${apiBaseUrl}/metamask/user/${publicAddress}`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        method: 'GET',
+    })
         .then((response) => response.json())
         // If yes, retrieve it. If no, create it.
         .then((user) => Object.entries(user).length ? user : handleSignup(publicAddress))
@@ -96,9 +106,20 @@ const handleClick = async () => {
         });
 };
 
+const handleClickLogOut = async () => {
+    if (localStorage.getItem('JWTToken')) {
+        localStorage.removeItem('JWTToken');
+    }
+    window.location.href = '/';
+};
+
 const LogInWithMetaMask = () => {
     return (
-        <button className="btn btn-primary" onClick={ handleClick }>
+        JWTToken ?
+        <button className="btn btn-primary" onClick={ handleClickLogOut }>
+            Log Out
+        </button> :
+        <button className="btn btn-primary" onClick={ handleClickLogIn }>
             Log In With a MetaMask
         </button>
     );

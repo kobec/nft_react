@@ -2,24 +2,26 @@ import Web3 from 'web3';
 
 let web3 = Web3 | undefined; // Will hold the web3 instance
 
-const handleAuthenticate = ({ publicAddress, signature }) =>
+const signMessage = 'I am signing my one-time nonce: ';
+
+const handleAuthenticate = ({ network_identity, signature }) =>
     fetch(`${process.env.REACT_APP_API_BASE}/metamask/auth`, {
-        body: JSON.stringify({ publicAddress, signature }),
+        body: JSON.stringify({ network_identity, signature }),
         headers: {
             'Content-Type': 'application/json',
         },
         method: 'POST',
     }).then((response) => response.json());
 
-const handleSignMessage = async ({ publicAddress, nonce }) => {
+const handleSignMessage = async ({ network_identity, network_nonce }) => {
     try {
         const signature = await web3.eth.personal.sign(
-            `I am signing my one-time nonce: ${nonce}`,
-            publicAddress,
+            signMessage + network_nonce,
+            network_identity,
             '' // MetaMask will ignore the password argument here
         );
 
-        return { publicAddress, signature };
+        return { network_identity, signature };
     } catch (err) {
         throw new Error(
             'You need to sign the message to be able to log in.'
@@ -27,9 +29,9 @@ const handleSignMessage = async ({ publicAddress, nonce }) => {
     }
 };
 
-const handleSignup = (publicAddress) =>
+const handleSignup = (network_identity) =>
     fetch(`${process.env.REACT_APP_API_BASE}/metamask/signup`, {
-        body: JSON.stringify({ publicAddress }),
+        body: JSON.stringify({ network_identity }),
         headers: {
             'Content-Type': 'application/json',
         },
@@ -37,7 +39,13 @@ const handleSignup = (publicAddress) =>
     }).then((response) => response.json());
 
 const onLoggedIn = (data) => {
+    const { success } = data;
+
     console.log(data);
+
+    if (success) {
+        window.alert('Authorization was successful!');
+    }
 };
 
 const handleClick = async () => {
@@ -76,9 +84,7 @@ const handleClick = async () => {
     )
         .then((response) => response.json())
         // If yes, retrieve it. If no, create it.
-        .then((users) =>
-            users.length ? users[0] : handleSignup(publicAddress)
-        )
+        .then((user) => Object.entries(user).length ? user : handleSignup(publicAddress))
         // Popup MetaMask confirmation modal to sign message
         .then(handleSignMessage)
         // Send signature to backend on the /auth route

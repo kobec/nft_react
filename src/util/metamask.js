@@ -39,11 +39,11 @@ const handleSignup = (network_identity) =>
     }).then((response) => response.json());
 
 const onLoggedIn = (data) => {
-    const { success } = data;
+    const { token } = data;
 
     console.log(data);
 
-    if (success) {
+    if (token) {
         window.alert('Authorization was successful!');
     }
 };

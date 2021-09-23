@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FetcherService from '../../util/fetcher';
 import './item-details.css';
 import { useParams } from "react-router-dom";
-import { getCurrentWalletConnected, tokenOwner, transferToken } from "../../util/interact.js";
+import {getCurrentWalletConnected, tokenOwner, transferToken, allowBuy, disallowBuy, buy, getTokenPrice} from "../../util/interact.js";
 import Spinner from '../Spinner/spinner';
 
 const ItemDetails = () => {
@@ -11,10 +11,13 @@ const ItemDetails = () => {
     const [status, setStatus] = useState("");
     const [isItemOwner, setIsItemOwner] = useState(false);
     const [itemOwner, setItemOwner] = useState("");
+    const [tokenPrice, setTokenPrice] = useState(0);
+    const [tokenPriceUnit, setTokenPriceUnit] = useState('ether');
 
     const [sendAddress, setSendAddress] = useState("");
-    const [sendPrice, setSendPrice] = useState("");
+    const [sendPrice, setSendPrice] = useState(0);
     const [sendStatus, setSendStatus] = useState("");
+    const [buyStatus, setBuyStatus] = useState("");
 
     const [nft, setNft] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -41,6 +44,9 @@ const ItemDetails = () => {
                 setItemOwner(owner.toUpperCase());
             });
         });
+        getTokenPrice(token_id,'ether').then((tokenPrice) => {
+            setTokenPrice(tokenPrice);
+        });
     }, []);
 
     const showSendBlock = () => setDisabled(!disabled);
@@ -61,6 +67,36 @@ const ItemDetails = () => {
         }
     }
 
+    const onDisallowBuyPressed = async () => {
+        if (!isItemOwner) {
+            setSendStatus("❗You are not allowed to do this action");
+            return;
+        }
+        const { success, status } = await disallowBuy(contract_address, token_id);
+        setBuyStatus(status);
+    }
+    const onAllowBuyPressed = async () => {
+        if (!isItemOwner) {
+            setSendStatus("❗You are not allowed to do this action");
+            return;
+        }
+        if(!sendPrice>0 || typeof sendPrice != 'number'){
+            setSendStatus("❗Price must be greater then 0");
+            return;
+        }
+        const { success, status } = await allowBuy(contract_address, token_id, sendPrice);
+        setBuyStatus(status);
+    }
+
+    const onBuyPressed = async () => {
+        try {
+            const {success, status} = await buy(token_id);
+            setBuyStatus(status);
+        }catch (error) {
+            setBuyStatus(error.message);
+        }
+    }
+
     return (
         <React.Fragment>
             {
@@ -73,9 +109,8 @@ const ItemDetails = () => {
                             <div className="item-info">
                                 <p>{nft.token_data ? nft.token_data.name : ''}</p>
                                 <div className="d-flex">
-                                    {1 ?
+                                    {isItemOwner ?
                                         <div>
-                                            <button type="button" className="btn btn-primary">Buy</button>
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary"
@@ -93,37 +128,39 @@ const ItemDetails = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        :
-                                        <button type="button" className="btn btn-primary">Buy</button>
+                                        :tokenPrice > 0?
+                                        <button type="button" onClick={onBuyPressed} className="btn btn-primary">Buy for {tokenPrice} {tokenPriceUnit}</button>:''
                                     }
                                 </div>
                                 <div className="status" id="status" style={{ color: "red" }}>
                                     {sendStatus}
                                 </div>
                                 <div className="d-flex">
-                                    {1 ?
+                                    {isItemOwner ?
                                         <div>
-                                            <button type="button" className="btn btn-primary">Disallow</button>
+                                            <button type="button" onClick={onDisallowBuyPressed} className="btn btn-primary">Disallow Buy</button>
                                             <button
                                                 type="button"
                                                 className="btn btn-secondary"
                                                 onClick={() => showPriceBlock()}>
-                                                Allow
+                                                Allow Buy
                                             </button>
                                             <div className="input-group" style={disabledPrice ? { display: 'none' } : { display: 'flex' }}>
                                                 <input type="text"
                                                     className="form-control"
-                                                    placeholder="Enter ether wallet address"
-                                                    onChange={(event) => setSendPrice(event.target.value)}
+                                                    placeholder="Enter token price in WEI"
+                                                    onChange={(event) => setSendPrice(parseInt(event.target.value))}
                                                 />
                                                 <div className="input-group-append">
-                                                    <button className="btn btn-success" type="button">Confirm</button>
+                                                    <button className="btn btn-success" onClick={onAllowBuyPressed} type="button">Confirm</button>
                                                 </div>
                                             </div>
                                         </div>
-                                        :
-                                        <button type="button" className="btn btn-primary">Buy</button>
+                                        :''
                                     }
+                                </div>
+                                <div className="status" id="status" style={{ color: "pink" }}>
+                                    {buyStatus}
                                 </div>
                                 <div className="item-desc">
                                     <p className="item-desc__owner"><span>Owner: </span>{itemOwner}</p>

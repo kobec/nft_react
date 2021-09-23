@@ -1,18 +1,20 @@
-import { pinJSONToIPFS, pinFileToIPFS } from "./pinata.js";
+import {pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
 
 require("dotenv").config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-const contractABI = require("../contract-abi.json");
+//const contractABI = require("../contract-abi.json");
+const contractABI = require("../contract-abi-snft.json");
 //const contractAddress = "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE";
 //const contractAddress = "0x88a9780Fb8077c40CF02402a8eea829abE63F286";//ownable
 //const contractAddress = "0xfaCf2DeE4197560D74E26C1158D17152b5384F2e";
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const {createAlchemyWeb3} = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 //const fs = require('fs');
 
 export const connectWallet = async () => {
     if (window.ethereum) {
+
         try {
             const addressArray = await window.ethereum.request({
                 method: "eth_requestAccounts",
@@ -35,7 +37,7 @@ export const connectWallet = async () => {
                 <span>
                     <p>
                         {" "}
-              🦊{" "}
+                        🦊{" "}
                         <a target="_blank" href={`https://metamask.io/download.html`}>
                             You must install Metamask, a virtual Ethereum wallet, in your
                             browser.
@@ -77,7 +79,7 @@ export const getCurrentWalletConnected = async () => {
                 <span>
                     <p>
                         {" "}
-              🦊{" "}
+                        🦊{" "}
                         <a target="_blank" href={`https://metamask.io/download.html`}>
                             You must install Metamask, a virtual Ethereum wallet, in your
                             browser.
@@ -94,8 +96,116 @@ export const getCurrentWalletConnected = async () => {
 // }
 
 export const tokenOwner = async (contract, token_id) => {
-    window.contract = await new web3.eth.Contract(contractABI, contract);
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contract);
+    }
     return window.contract.methods.ownerOf(token_id).call();
+}
+
+export const disallowBuy = async (contract, token_id) => {
+    try {
+        const transactionParameters = {
+            to: contractAddress, // Required except during contract publications.
+            from: window.ethereum.selectedAddress, // must match user's active address.
+            data: window.contract.methods
+                .disallowBuy(token_id)
+                .encodeABI(),
+        };
+        const txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [transactionParameters],
+        });
+        return {
+            success: true,
+            status:
+                "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+                txHash,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            status: "😥 Something went wrong: " + error.message,
+        };
+    }
+}
+
+export const allowBuy = async (contract, token_id, value) => {
+    try {
+        const transactionParameters = {
+            to: contractAddress, // Required except during contract publications.
+            from: window.ethereum.selectedAddress, // must match user's active address.
+            data: window.contract.methods
+                .allowBuy(token_id, value)
+                .encodeABI(),
+        };
+        const txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [transactionParameters],
+        });
+        return {
+            success: true,
+            status:
+                "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+                txHash,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            status: "😥 Something went wrong: " + error.message,
+        };
+    }
+}
+
+export const getTokenPrice = async (tokenId,unit='') => {
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    }
+    let weiPrice= await window.contract.methods
+        .getTokenPrice(tokenId)
+        .call()
+    if(unit===''){
+        return weiPrice;
+    }
+    return web3.utils.fromWei(weiPrice,unit);
+}
+
+export const buy = async (tokenId) => {
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    }
+    let tokenPrice = await window.contract.methods
+        .getTokenPrice(tokenId)
+        .call();
+    try {
+        const transactionParameters = {
+            to: contractAddress, // Required except during contract publications.
+            from: window.ethereum.selectedAddress, // must match user's active address.
+            value: web3.utils.numberToHex(tokenPrice),
+            data: window.contract.methods
+                .buy(tokenId)
+                .encodeABI(),
+        };
+        const txHash = await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [transactionParameters],
+        });
+        return {
+            success: true,
+            status:
+                "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" +
+                txHash,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            status: "😥 Something went wrong: " + error.message,
+        };
+    }
+
+    return {
+        success: false,
+        status: "test",
+    }
 }
 
 
@@ -106,7 +216,9 @@ export const transferToken = async (toAddress, tokenId) => {
             status: "❗Please enter valid wallet address",
         };
     }
-    window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    }
 
     try {
         const transactionParameters = {
@@ -132,7 +244,7 @@ export const transferToken = async (toAddress, tokenId) => {
             status: "😥 Something went wrong: " + error.message,
         };
     }
-    
+
     return {
         success: false,
         status: "test",
@@ -163,8 +275,9 @@ export const mintNFT = async (url, name, description) => {
     console.log(pinataResponse);
     const tokenURI = pinataResponse.pinataUrl;
     //console.log(tokenURI);
-    window.contract = await new web3.eth.Contract(contractABI, contractAddress);
-
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    }
     const transactionParameters = {
         to: contractAddress, // Required except during contract publications.
         from: window.ethereum.selectedAddress, // must match user's active address.
@@ -228,7 +341,9 @@ export const mintNFTFromSelectedFile = async (file, name, description) => {
     const pinataResponse = await pinJSONToIPFS(metadata);
     const tokenURI = pinataResponse.pinataUrl;
     console.log(tokenURI);
-    window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    if(!window.contract) {
+        window.contract = await new web3.eth.Contract(contractABI, contractAddress);
+    }
 
     const transactionParameters = {
         to: contractAddress, // Required except during contract publications.

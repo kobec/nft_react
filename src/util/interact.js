@@ -1,6 +1,8 @@
 import {pinJSONToIPFS, pinFileToIPFS} from "./pinata.js";
-
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production')
+{
+    require("dotenv").config();
+}
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 //const contractABI = require("../contract-abi.json");
 const contractABI = require("../contract-abi-snft.json");

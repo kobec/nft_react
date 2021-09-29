@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 export default class FetcherService {
 
     _apiBase = process.env.REACT_APP_API_BASE;
@@ -6,7 +8,7 @@ export default class FetcherService {
     getResource = async (url) => {
         const JWTToken = localStorage.getItem('JWTToken');
 
-        if (! JWTToken) {
+        if (!JWTToken) {
             window.alert('Error, please log in!');
             window.location.href = '/';
         }

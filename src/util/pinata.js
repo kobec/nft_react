@@ -1,4 +1,6 @@
-require('dotenv').config();//todo: it does not work with Encore, so env is configured in webpack.config.js
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();//todo: it does not work with Encore, so env is configured in webpack.config.js
+}
 //const Dotenv = require('dotenv-webpack');
 const key = process.env.REACT_APP_PINATA_KEY;
 //console.log(key);

@@ -61,10 +61,11 @@ const Minter = () => {
 
     return (
         <div className="Minter">
-            <h1 id="title">🧙‍♂️ Alchemy NFT Minter</h1>
+            <h1 id="title">🧙 NFT Demo Shop</h1>
             <p>
-                Simply add your asset's link, name, and description, then press "Mint."
+                Select file, name, and description, then press "Mint NFT"
             </p>
+            <p>Then u can Send, sell, buy</p>
             <form>
                 <h2>🖼 Select asset: </h2>
                 <input

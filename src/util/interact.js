@@ -4,7 +4,6 @@ if (process.env.NODE_ENV === 'local')
    //require("dotenv").config();
 }
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-alert(alchemyKey);
 //const contractABI = require("../contract-abi.json");
 const contractABI = require("../contract-abi-snft.json");
 //const contractAddress = "0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE";
@@ -342,6 +341,12 @@ export const mintNFTFromSelectedFile = async (file, name, description) => {
         };
     }
     //first - upload media to the pinata
+    if(file.size>100000){
+        return {
+            success: false,
+            status: "❗Maximum allowed demo file size is 100 kb",
+        };
+    }
     let data = new FormData();
     data.append('file', file);
     //make metadata

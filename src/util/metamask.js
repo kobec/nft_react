@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import React, {useState} from 'react';
 
 let web3 = Web3 | undefined; // Will hold the web3 instance
 
@@ -114,8 +115,73 @@ const handleClickLogOut = async () => {
 };
 
 const LogInWithMetaMask = () => {
+    const [loggedIn, setLoggedIn] = useState( !!localStorage.getItem('JWTToken'));
+
+    const onLoggedIn = (data) => {
+        const { token } = data;
+        setLoggedIn(true);
+        if (token) {
+            localStorage.setItem('JWTToken', token);
+
+          //  window.location.href = '/';
+        }
+    };
+
+    const handleClickLogIn = async () => {
+        // Check if MetaMask is installed
+        if (! window.ethereum) {
+            window.alert('Please install MetaMask first.');
+            return;
+        }
+
+        if (! web3) {
+            try {
+                // Request account access if needed
+                await window.ethereum.enable();
+
+                // We don't know window.web3 version, so we use our own instance of Web3
+                // with the injected provider given by MetaMask
+                web3 = new Web3(window.ethereum);
+
+            } catch (error) {
+                window.alert('You need to allow MetaMask.');
+                return;
+            }
+        }
+
+        const coinbase = await web3.eth.getCoinbase();
+        if (! coinbase) {
+            window.alert('Please activate MetaMask first.');
+            return;
+        }
+
+        const publicAddress = coinbase.toLowerCase();
+
+        // Look if user with current publicAddress is already present on backend
+        fetch(`${apiBaseUrl}/metamask/user/${publicAddress}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            method: 'GET',
+        })
+            .then((response) => response.json())
+            // If yes, retrieve it. If no, create it.
+            .then((user) => Object.entries(user).length ? user : handleSignup(publicAddress))
+            // Popup MetaMask confirmation modal to sign message
+            .then(handleSignMessage)
+            // Send signature to backend on the /auth route
+            .then(handleAuthenticate)
+            // Pass accessToken back to parent component (to save it in localStorage)
+            .then(onLoggedIn)
+            .catch((err) => {
+                window.alert(err);
+            });
+    };
+
+
     return (
-        JWTToken ?
+        loggedIn ?
         <button className="btn btn-primary" onClick={ handleClickLogOut }>
             Log Out
         </button> :

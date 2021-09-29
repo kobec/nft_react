@@ -173,6 +173,31 @@ export const buy = async (tokenId) => {
     if(!window.contract) {
         window.contract = await new web3.eth.Contract(contractABI, contractAddress);
     }
+    /*window.contract.events.NftBought({fromBlock: 0}, function(error, event){ console.log(event); })
+        .on("connected", function(subscriptionId){
+            console.log(subscriptionId);
+        })
+        .on('data', function(event){
+            console.log(event); // same results as the optional callback above
+        })
+        .on('changed', function(event){
+            // remove event from local database
+        })
+        .on('error', function(error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+        console.log(error);
+        });*/
+   /* window.contract.NftBought().watch({}, '', function(error, result) {
+        alert('1');
+        if (!error) {
+           console.log("Coin transfer: " + result.args.amount +
+                " coins were sent from " + result.args.from +
+                " to " + result.args.to + ".");
+            console.log("Balances now:\n" +
+                "Sender: " + Coin.balances.call(result.args.from) +
+                "Receiver: " + Coin.balances.call(result.args.to));
+            console.log(result);
+        }
+    })*/
     let tokenPrice = await window.contract.methods
         .getTokenPrice(tokenId)
         .call();

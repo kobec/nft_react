@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LogInWithMetaMask } from '../../util/metamask';
+import { getJWTToken, handleLogIn, handleLogOut } from '../../util/metamask';
 import {
     getCurrentWalletConnected,
     connectWallet,
@@ -14,21 +14,47 @@ const Header = () => {
     //destructuring pathname from location
     const { pathname } = location;
     const [walletAddress, setWallet] = useState("");
-    const [status, setStatus] = useState("");
+    const [JWTToken, setJWTToken] = useState('');
     const splitLocation = pathname.split("/");
 
-    useEffect(async () => {
-        const { address, status } = await getCurrentWalletConnected();
+    const updateData = async () => {
+        const { address } = await getCurrentWalletConnected();
 
         setWallet(address);
-        setStatus(status);
+        setJWTToken(getJWTToken());
+    };
+
+    useEffect(async () => {
+        await updateData();
+        addWalletListener();
 
     }, []);
 
     const connectWalletPressed = async () => {
         const walletResponse = await connectWallet();
-        setStatus(walletResponse.status);
         setWallet(walletResponse.address);
+    };
+
+    const handleClickLogIn = async () => {
+        await handleLogIn();
+        await updateData();
+    };
+
+    const handleClickLogOut = async () => {
+        handleLogOut();
+        await updateData();
+    };
+
+    const addWalletListener = () => {
+        if (window.ethereum) {
+            window.ethereum.on("accountsChanged", (accounts) => {
+                if (accounts.length > 0) {
+                    setWallet(accounts[0]);
+                } else {
+                    setWallet('');
+                }
+            });
+        }
     };
 
     return (
@@ -62,7 +88,15 @@ const Header = () => {
                     </button>
                 </div>
                 <div>
-                    <LogInWithMetaMask />
+                    {JWTToken && JWTToken.length > 0 ? (
+                        <button className="btn btn-primary" onClick={ handleClickLogOut }>
+                            Log Out
+                        </button>
+                    ) : (
+                        <button className="btn btn-primary" onClick={ handleClickLogIn }>
+                            Log In With a MetaMask
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

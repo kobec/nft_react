@@ -341,7 +341,7 @@ export const mintNFTFromSelectedFile = async (file, name, description) => {
         };
     }
     //first - upload media to the pinata
-    if(file.size>100000){
+    if(file.size>250000){
         return {
             success: false,
             status: "❗Maximum allowed demo file size is 100 kb",
